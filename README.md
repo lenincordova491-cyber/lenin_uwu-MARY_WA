@@ -7,9 +7,9 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Node.js-20+-43853D?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js" />
+  <img src="https://img.shields.io/badge/Node.js-26.4.0-43853D?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js 26.4.0" />
   <img src="https://img.shields.io/badge/Zorin_OS-Linux-00ADD8?style=for-the-badge&logo=linux&logoColor=white" alt="Zorin OS" />
-  <img src="https://img.shields.io/badge/Baileys-6.7.9-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Baileys" />
+  <img src="https://img.shields.io/badge/Baileys-6.7.9-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Baileys 6.7.9" />
   <img src="https://img.shields.io/badge/ESM-Native-9C88FF?style=for-the-badge&logo=javascript&logoColor=white" alt="ESM" />
 </p>
 
