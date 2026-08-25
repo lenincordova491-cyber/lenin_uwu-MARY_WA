@@ -18,6 +18,7 @@ database/*.json
 *.webp
 !assets/
 !assets/logo.jpg
+!image_b0552b.png
 *.mp4
 *.mp3
 *.key
