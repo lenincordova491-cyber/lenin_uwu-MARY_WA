@@ -1,9 +1,14 @@
+import { existsSync } from 'fs'
 import { readFile } from 'fs/promises'
 import path from 'path'
 
-const LOGO_PATH = path.resolve(
-  process.env.MENU_LOGO_PATH || 'LOGO BOT MAR_WA.jpg'
-)
+const configuredLogoPath = process.env.MENU_LOGO_PATH
+  ? path.resolve(process.env.MENU_LOGO_PATH)
+  : null
+const defaultLogoPath = path.resolve('assets/logo.jpg')
+const LOGO_PATH = configuredLogoPath && existsSync(configuredLogoPath)
+  ? configuredLogoPath
+  : defaultLogoPath
 
 const MENU_TEXT = `╭━━━━━━━━━━━━━━━━━━╮
 ┃   *✦ M A R Y _ W A ✦*   ┃
