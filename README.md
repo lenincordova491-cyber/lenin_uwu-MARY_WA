@@ -1,4 +1,4 @@
-<p align="center"><img src="./image_b0552b.png" alt="MARY_WA Logo" width="350"></p>
+<p align="center"><img src="./assets/logo.jpg" alt="MARY_WA Logo" width="350"></p>
 
 <p align="center">
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&duration=2800&pause=900&color=A78BFA&center=true&vCenter=true&width=760&lines=El+est%C3%A1ndar+de+eficiencia.;Cero+fugas+de+memoria.;Optimizado+para+Linux.;Desarrollado+por+leninBy." alt="MARY_WA typing animation">
