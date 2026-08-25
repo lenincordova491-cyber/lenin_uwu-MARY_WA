@@ -1,0 +1,25 @@
+node_modules/
+session/
+session-backup*/
+temp/
+.env
+.env.*
+!.env.example
+*.log
+
+# Datos locales del bot
+database/*.json
+!database/grupos.example.json
+
+# Archivos de usuario o medios descargados
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.mp4
+*.mp3
+*.key
+*.pem
+*.p12
+*.sqlite
+*.db
