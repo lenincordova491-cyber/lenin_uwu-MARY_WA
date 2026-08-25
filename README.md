@@ -1,78 +1,90 @@
 # MARY_WA
 
-Bot de WhatsApp hecho con `@whiskeysockets/baileys`, en ESM, con comandos de
-descarga para TikTok, Instagram, Facebook y YouTube. Ninguna de las 4
-plataformas necesita apikey:
+Bot de WhatsApp de alto rendimiento hecho con `@whiskeysockets/baileys` en ESM. Diseñado con una arquitectura de **Protección de Memoria** para funcionar 24/7 en servidores o equipos con recursos limitados (ej. 3 GB de RAM).
 
-- TikTok / Instagram / Facebook → `ruhend-scraper`
-- YouTube (audio y video) → `@vreden/youtube_scraper`
+## 🚀 Características Principales
 
-> **Nota:** `ruhend-scraper` también trae una función `ytsearch`, pero en la
-> versión publicada (10.0.3) devuelve error interno y no trae `ytmp3`/`ytmp4`
-> pese a lo que dice su documentación — por eso YouTube usa una librería
-> aparte. Esto se verificó instalando el paquete real, no asumido de memoria.
+- **Descargas Optimizadas (Cero Buffers):** Audio y video de YouTube y Spotify se descargan a disco (`/temp`) evitando fugas de memoria (OOM).
+- **Gestor de Caché:** Los archivos multimedia se almacenan temporalmente por 15 minutos para envíos instantáneos si se solicitan repetidamente.
+- **Moderación Proactiva:** Sistema `.antilink` configurable por grupo con base de datos JSON local.
+- **Sin APIs de Paga:** Descargas de redes sociales utilizando scrapers ligeros y librerías públicas.
 
-## Estructura
+## 📂 Estructura del Proyecto
 
-```
+\`\`\`text
 lenin-bot/
 ├── commands/
-│   └── dow/              # comandos de descarga
-│       ├── tiktok.js      → .tiktok / .tt
-│       ├── instagram.js   → .instagram / .ig
-│       ├── facebook.js    → .fb / .facebook
-│       ├── play.js        → .play / .ytmp3 (audio)
-│       └── play2.js       → .play2 / .ytmp4 (video)
+│   ├── dow/              # Descargas
+│   │   ├── tiktok.js     → .tiktok / .tt
+│   │   ├── instagram.js  → .instagram / .ig
+│   │   ├── facebook.js   → .fb / .facebook
+│   │   ├── play.js       → .play (YouTube Audio)
+│   │   ├── play2.js      → .play2 (YouTube Video)
+│   │   └── spotify.js    → .spotify / .sp
+│   ├── mod/              # Moderación
+│   │   └── antilink.js   → .antilink on/off (Solo Admins)
+│   └── util/             # Utilidades
+│       ├── tts.js        → .tts (Texto a voz sin consumo local)
+│       └── menu.js       → .menu / .help
 ├── lib/
-│   ├── serialize.js       # envuelve el mensaje crudo de Baileys
-│   └── ytResolve.js       # helper compartido de búsqueda YouTube
-├── handler.js             # carga comandos y despacha mensajes
-├── index.js               # conexión a WhatsApp (entrypoint)
-├── settings.js            # configuración (prefijo, nombre del bot)
-└── .env.example
-```
+│   ├── cacheManager.js   # Gestión de archivos temporales
+│   ├── fetchUtils.js     # Timeouts para protección de red
+│   ├── groupManager.js   # Lógica de base de datos JSON
+│   └── serialize.js      # Envuelve el mensaje crudo de Baileys
+├── database/
+│   └── grupos.json       # Persistencia de configuración de grupos
+├── temp/                 # (Autogenerada) Archivos en tránsito
+├── handler.js            # Interceptor de reglas y despachador
+├── index.js              # Entrypoint y conexión
+└── settings.js           # Variables globales
+\`\`\`
 
-## Instalación
+## 🛠️ Instalación (Windows y Linux)
 
-```bash
+### 1. Preparar el entorno
+Necesitas Node.js y **FFmpeg** instalado en tu sistema.
+* **Linux (Ubuntu/Zorin):** `sudo apt update && sudo apt install ffmpeg -y`
+* **Windows:** Instalar FFmpeg y agregarlo al PATH.
+
+### 2. Instalar y Configurar
+\`\`\`bash
 npm install
-copy .env.example .env      # en PowerShell / Windows
-# cp .env.example .env      # en Linux / Termux / Mac
+# Copiar configuración
+cp .env.example .env
+\`\`\`
 
+*Nota: Para que `.spotify` funcione, agrega tus credenciales gratuitas de Spotify Developer en el archivo `.env`.*
+
+### 3. Iniciar el bot (Modo Desarrollo)
+\`\`\`bash
 npm start
-```
+\`\`\`
+Escanea el código QR que aparecerá en la terminal desde WhatsApp. La sesión se guarda en `./session/`.
 
-Al iniciar, va a aparecer un **código QR en la terminal**. Escaneálo desde
-WhatsApp → Configuración → Dispositivos vinculados → Vincular dispositivo.
+## 🔋 Despliegue 24/7 en Linux (PM2)
 
-La sesión se guarda en `./session/` — no la borres ni la subas a git
-(ya está en `.gitignore`).
+Para que el bot siga funcionando aunque cierres la terminal o se suspenda la ventana:
 
-## Agregar un comando nuevo
+\`\`\`bash
+# Instalar PM2 globalmente
+sudo npm install -g pm2
 
-1. Creá un archivo en `commands/dow/` (o una categoría nueva, ej. `commands/juegos/`).
-2. Exportá un objeto por defecto con esta forma:
+# Iniciar MARY_WA en segundo plano
+pm2 start index.js --name "mary-wa"
 
-```js
+# Ver la consola en tiempo real
+pm2 logs mary-wa
+\`\`\`
+
+## 🧩 Cómo agregar comandos
+Crea un archivo en cualquier carpeta dentro de `commands/` y exporta el módulo. El `handler.js` lo cargará dinámicamente en el próximo arranque:
+
+\`\`\`js
 export default {
   command: ['nombre', 'alias'],
-  category: 'downloader',
+  category: 'utilidad',
   run: async ({ client, m, args, text }) => {
-    // args: array de palabras después del comando
-    // text: todo el texto después del comando, como string
-    // m.reply('...') responde citando el mensaje original
+    await m.reply('¡Comando ejecutado exitosamente!');
   },
 }
-```
-
-El `handler.js` lo detecta solo la próxima vez que arranques el bot — no
-hace falta registrarlo en ningún lado más.
-
-## Extender a otras plataformas (Spotify, Twitter, etc.)
-
-`ruhend-scraper` no cubre todo. Si en el futuro querés sumar Spotify,
-Twitter/X, MediaFire o Google Drive, vas a necesitar una API externa con
-apikey (por ejemplo NyxDLaPI, gratuita). El `.env.example` ya deja los
-campos `NYX_BASE` y `NYX_API_KEY` listos para ese caso — solo hay que
-crear el archivo del comando siguiendo el mismo patrón que
-`commands/dow/tiktok.js`, pero pegándole a la API en vez de a `ruhend-scraper`.
+\`\`\`
